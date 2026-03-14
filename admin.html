@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NairaFlow Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #0D1117;
+  --ink2: #1C2333;
+  --ink3: #252F42;
+  --sidebar-w: 260px;
+  --gold: #D4A843;
+  --gold2: #F0C060;
+  --gold-light: #FBF3E0;
+  --green: #0F9E6B;
+  --green-light: #E6F7F1;
+  --red: #E53E3E;
+  --red-light: #FFF0F0;
+  --blue: #3B82F6;
+  --blue-light: #EFF6FF;
+  --amber: #F59E0B;
+  --amber-light: #FFFBEB;
+  --muted: #6B7A99;
+  --subtle: #A8B4CC;
+  --line: rgba(255,255,255,0.08);
+  --line2: #E2E8F4;
+  --surface: #F7F9FC;
+  --white: #FFFFFF;
+  --r: 10px;
+  --r-lg: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Sora', sans-serif; background: var(--ink); color: var(--white); display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--ink2);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; bottom: 0;
+  z-index: 50;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 24px 20px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 16px; font-weight: 700;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--gold);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  flex-shrink: 0;
+}
+.sidebar-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted);
+  padding: 20px 20px 8px;
+}
+.sidebar-nav { list-style: none; padding: 0 10px; }
+.sidebar-nav li { margin-bottom: 2px; }
+.sidebar-nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--subtle);
+  text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+.sidebar-nav a.active { background: rgba(212,168,67,0.12); color: var(--gold); }
+.sidebar-nav .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--line);
+}
+.sidebar-footer a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  color: var(--muted); text-decoration: none; font-size: 13px;
+  transition: all 0.15s;
+}
+.sidebar-footer a:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+
+/* ── MAIN ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex; flex-direction: column;
+  min-height: 100vh;
+}
+.topbar {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--line);
+  padding: 0 32px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar-title { font-size: 16px; font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.topbar-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none; border-radius: 8px;
+  padding: 9px 18px;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.topbar-btn:hover { background: var(--gold2); }
+.topbar-btn.secondary {
+  background: rgba(255,255,255,0.07);
+  color: var(--white);
+}
+.topbar-btn.secondary:hover { background: rgba(255,255,255,0.12); }
+
+.content { padding: 32px; flex: 1; }
+
+/* ── TABS ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.card-title { font-size: 15px; font-weight: 600; }
+.card-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* ── FORM ELEMENTS ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.form-field { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r);
+  padding: 11px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px; color: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--gold);
+}
+.form-input::placeholder { color: var(--muted); }
+.form-select { cursor: pointer; appearance: none; }
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.form-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* ── INLINE EDITABLE ── */
+.field-row {
+  display: flex; align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+}
+.field-row:last-child { border-bottom: none; }
+.field-key { font-size: 13px; color: var(--muted); width: 160px; flex-shrink: 0; }
+.field-val { flex: 1; }
+.field-val input {
+  width: 100%;
+  background: transparent; border: none;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px; color: var(--white);
+  outline: none;
+  padding: 4px 8px; border-radius: 6px;
+  transition: background 0.2s;
+}
+.field-val input:hover { background: rgba(255,255,255,0.04); }
+.field-val input:focus { background: var(--ink3); border: 1px solid var(--gold); }
+
+/* ── RATE TABLE ── */
+.rate-table { width: 100%; border-collapse: collapse; }
+.rate-table th {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-align: left;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.rate-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 14px;
+  vertical-align: middle;
+}
+.rate-table tr:last-child td { border-bottom: none; }
+.rate-table tr:hover td { background: rgba(255,255,255,0.02); }
+.flag-cell { display: flex; align-items: center; gap: 10px; }
+.rate-input {
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; color: var(--white);
+  width: 120px; outline: none;
+  transition: border-color 0.2s;
+}
+.rate-input:focus { border-color: var(--gold); }
+.spread-input {
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; color: var(--white);
+  width: 80px; outline: none;
+  transition: border-color 0.2s;
+}
+.spread-input:focus { border-color: var(--gold); }
+.toggle {
+  position: relative; width: 40px; height: 22px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 11px; cursor: pointer;
+  transition: background 0.2s; border: none; flex-shrink: 0;
+}
+.toggle.on { background: var(--green); }
+.toggle::after {
+  content: ''; position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: var(--white); border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle.on::after { transform: translateX(18px); }
+
+/* ── STAT CARDS ── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--ink2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 20px 24px;
+}
+.stat-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; }
+.stat-val input {
+  background: transparent; border: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 22px; font-weight: 500;
+  color: var(--white); outline: none; width: 100%;
+  padding: 2px 6px; border-radius: 6px;
+  transition: background 0.2s;
+}
+.stat-val input:hover { background: rgba(255,255,255,0.05); }
+.stat-val input:focus { background: var(--ink3); border: 1px solid var(--gold); }
+.stat-change { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ── TESTIMONIAL CARDS ── */
+.testi-card {
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.testi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.testi-num { font-size: 12px; color: var(--muted); font-weight: 600; }
+.testi-actions { display: flex; gap: 8px; }
+.icon-btn {
+  background: rgba(255,255,255,0.06);
+  border: none; border-radius: 6px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  color: var(--muted); transition: all 0.15s;
+}
+.icon-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+.icon-btn.danger:hover { background: var(--red-light); color: var(--red); }
+
+/* ── CITY TAGS ── */
+.city-wrap { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.city-tag {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 13px; color: var(--subtle);
+}
+.city-tag .remove {
+  background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 16px; line-height: 1;
+  padding: 0; transition: color 0.15s;
+  display: flex; align-items: center;
+}
+.city-tag .remove:hover { color: var(--red); }
+.add-city-row { display: flex; gap: 10px; }
+.add-city-row input {
+  flex: 1; background: var(--ink3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r); padding: 10px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px; color: var(--white); outline: none;
+  transition: border-color 0.2s;
+}
+.add-city-row input:focus { border-color: var(--gold); }
+.add-btn {
+  background: rgba(212,168,67,0.15);
+  border: 1px solid rgba(212,168,67,0.3);
+  color: var(--gold);
+  border-radius: var(--r); padding: 10px 18px;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.add-btn:hover { background: rgba(212,168,67,0.25); }
+
+/* ── PREVIEW PANE ── */
+.preview-bar {
+  background: var(--ink3);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px;
+  font-size: 13px; color: var(--muted);
+}
+.preview-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+/* ── BADGE / PILL ── */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+}
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-blue { background: var(--blue-light); color: var(--blue); }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--line); margin: 24px 0; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--ink2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 4px solid var(--green);
+  color: var(--white);
+  padding: 14px 20px; border-radius: var(--r);
+  font-size: 14px; z-index: 9999;
+  display: flex; align-items: center; gap: 10px;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s; pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── EXPORT SECTION ── */
+.export-card {
+  background: linear-gradient(135deg, rgba(212,168,67,0.08) 0%, var(--ink2) 100%);
+  border: 1px solid rgba(212,168,67,0.2);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.export-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.export-card p { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.export-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ── GITHUB GUIDE ── */
+.step-list { list-style: none; }
+.step-list li {
+  display: flex; gap: 16px; margin-bottom: 24px;
+  align-items: flex-start;
+}
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(212,168,67,0.15);
+  border: 1px solid rgba(212,168,67,0.3);
+  color: var(--gold); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.code-block {
+  background: var(--ink);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; color: #A8B4CC;
+  margin-top: 10px; line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+}
+.code-block .cmd { color: var(--gold2); }
+.code-block .comment { color: var(--muted); }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark" id="sb_logomark">N</div>
+    <span id="sb_brandname">NairaFlow</span>
+    <span style="margin-left:auto;font-size:10px;background:rgba(212,168,67,0.15);color:var(--gold);padding:3px 8px;border-radius:4px;font-weight:600">Admin</span>
+  </div>
+
+  <div class="sidebar-label">Settings</div>
+  <ul class="sidebar-nav">
+    <li><a onclick="showPage('branding')" class="active" id="nav-branding"><span class="nav-icon">🎨</span> Branding</a></li>
+    <li><a onclick="showPage('rates')" id="nav-rates"><span class="nav-icon">💱</span> Exchange rates</a></li>
+    <li><a onclick="showPage('stats')" id="nav-stats"><span class="nav-icon">📊</span> Homepage stats</a></li>
+    <li><a onclick="showPage('delivery')" id="nav-delivery"><span class="nav-icon">📦</span> Delivery cities</a></li>
+    <li><a onclick="showPage('testimonials')" id="nav-testimonials"><span class="nav-icon">💬</span> Testimonials</a></li>
+    <li><a onclick="showPage('faq')" id="nav-faq"><span class="nav-icon">❓</span> FAQ</a></li>
+  </ul>
+
+  <div class="sidebar-label">Deploy</div>
+  <ul class="sidebar-nav">
+    <li><a onclick="showPage('export')" id="nav-export"><span class="nav-icon">⬇️</span> Export website</a></li>
+    <li><a onclick="showPage('github')" id="nav-github"><span class="nav-icon">🐙</span> Push to GitHub</a></li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <a href="javascript:void(0)" onclick="previewSite()">
+      <span style="font-size:16px">👁</span> Preview website
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Branding</div>
+    <div class="topbar-right">
+      <button class="topbar-btn secondary" onclick="resetPage()">Reset changes</button>
+      <button class="topbar-btn" onclick="saveAll()">Save & apply changes</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── BRANDING PAGE ── -->
+    <div class="page active" id="page-branding">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Business identity</div>
+            <div class="card-sub">Your name and logo appear on every page of the website</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Business name</label>
+            <input class="form-input" id="b_name" value="NairaFlow" oninput="syncBranding()"/>
+            <div class="form-hint">Appears in the nav bar, footer and browser tab</div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Logo letter / initials</label>
+            <input class="form-input" id="b_initial" value="N" maxlength="2" oninput="syncBranding()"/>
+            <div class="form-hint">1–2 characters shown in the logo mark (e.g. "NF")</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Tagline (hero heading)</label>
+            <input class="form-input" id="b_tagline" value="Send naira abroad. Receive any currency."/>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Hero sub-text</label>
+            <input class="form-input" id="b_sub" value="The fastest way to convert NGN and send money..."/>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Legal & compliance</div>
+            <div class="card-sub">Shown in the website footer</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-key">CAC Reg. number</div>
+          <div class="field-val"><input id="l_cac" value="RC: 1234567" placeholder="e.g. RC: 7654321"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-key">CBN licence type</div>
+          <div class="field-val"><input id="l_cbn" value="CBN Licensed Bureau De Change" placeholder="Licence description"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-key">Copyright year</div>
+          <div class="field-val"><input id="l_year" value="2025" placeholder="2025"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-key">Contact email</div>
+          <div class="field-val"><input id="l_email" value="support@nairaflow.com" placeholder="your@email.com"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field-key">Contact phone</div>
+          <div class="field-val"><input id="l_phone" value="+234 801 234 5678" placeholder="+234 ..."/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RATES PAGE ── -->
+    <div class="page" id="page-rates">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Exchange rates & spreads</div>
+            <div class="card-sub">Set your rate per currency and control which ones are active</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="topbar-btn secondary" onclick="refreshRates()" style="font-size:12px;padding:7px 14px">↻ Refresh from market</button>
+          </div>
+        </div>
+        <table class="rate-table">
+          <thead>
+            <tr>
+              <th>Currency</th>
+              <th>Rate (NGN per 1 unit)</th>
+              <th>Your spread %</th>
+              <th>Customer rate</th>
+              <th>Speed</th>
+              <th>Active</th>
+            </tr>
+          </thead>
+          <tbody id="rateTableBody"></tbody>
+        </table>
+      </div>
+      <div class="card" style="background:rgba(212,168,67,0.05);border-color:rgba(212,168,67,0.2)">
+        <div style="font-size:13px;color:var(--muted);line-height:1.7">
+          <strong style="color:var(--gold)">How spreads work:</strong> If the market rate for USD is ₦1,620 and you set a 1.5% spread, customers pay ₦1,620 × 1.015 = ₦1,644.30 per dollar. Your profit is ₦24.30 per dollar exchanged. Higher spreads = more profit per transaction, but may push customers to competitors. Typical range: 1% – 2.5%.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STATS PAGE ── -->
+    <div class="page" id="page-stats">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Homepage trust statistics</div>
+            <div class="card-sub">The four numbers displayed prominently on the hero section</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total transferred</div>
+            <div class="stat-val"><input id="st_transferred" value="₦2.4B+"/></div>
+            <div class="stat-change">Shown as-is on homepage</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total customers</div>
+            <div class="stat-val"><input id="st_customers" value="14,000+"/></div>
+            <div class="stat-change">Shown as-is on homepage</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Countries supported</div>
+            <div class="stat-val"><input id="st_countries" value="22 countries"/></div>
+            <div class="stat-change">Shown as-is on homepage</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. delivery time</div>
+            <div class="stat-val"><input id="st_speed" value="&lt;4 hrs"/></div>
+            <div class="stat-change">Shown as-is on homepage</div>
+          </div>
+        </div>
+        <div style="background:var(--ink3);border-radius:var(--r);padding:16px;font-size:13px;color:var(--muted);line-height:1.7">
+          <strong style="color:var(--subtle)">Tip:</strong> When you first launch, use values like "Fast & secure", "Trusted service", "22 countries", "Same day" instead of made-up numbers. Update these to real figures as your business grows.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DELIVERY CITIES PAGE ── -->
+    <div class="page" id="page-delivery">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Cash delivery cities</div>
+            <div class="card-sub">Cities where your agents can deliver cash hand-to-hand</div>
+          </div>
+        </div>
+        <div class="city-wrap" id="cityWrap"></div>
+        <div class="add-city-row">
+          <input id="newCity" placeholder="Type a city name e.g. Kaduna" onkeydown="if(event.key==='Enter') addCity()"/>
+          <button class="add-btn" onclick="addCity()">+ Add city</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Delivery SLA message</div>
+            <div class="card-sub">Shown in the FAQ and delivery section</div>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">SLA description</label>
+          <input class="form-input" id="sla_text" value="4-hour delivery SLA in major cities"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TESTIMONIALS PAGE ── -->
+    <div class="page" id="page-testimonials">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Customer testimonials</div>
+            <div class="card-sub">Up to 6 testimonials shown on the website</div>
+          </div>
+          <button class="add-btn" onclick="addTestimonial()">+ Add testimonial</button>
+        </div>
+        <div id="testiList"></div>
+      </div>
+    </div>
+
+    <!-- ── FAQ PAGE ── -->
+    <div class="page" id="page-faq">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">FAQ questions & answers</div>
+            <div class="card-sub">Edit, reorder, or add questions shown on the website</div>
+          </div>
+          <button class="add-btn" onclick="addFaq()">+ Add question</button>
+        </div>
+        <div id="faqList"></div>
+      </div>
+    </div>
+
+    <!-- ── EXPORT PAGE ── -->
+    <div class="page" id="page-export">
+      <div class="export-card">
+        <h3>Export your updated website</h3>
+        <p>When you save your changes here, they are stored in your browser. Click the button below to download the fully updated <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px">index.html</code> file with all your customisations applied — ready to upload to any web host or push to GitHub.</p>
+        <div class="export-actions">
+          <button class="topbar-btn" onclick="exportWebsite()">⬇ Download index.html</button>
+          <button class="topbar-btn secondary" onclick="previewSite()">👁 Preview first</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">What gets updated on export</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--ink3);border-radius:var(--r);padding:14px;font-size:13px;color:var(--muted);line-height:1.8">
+            ✓ Business name & logo<br/>
+            ✓ All exchange rates & spreads<br/>
+            ✓ Homepage statistics<br/>
+            ✓ Active/inactive currencies
+          </div>
+          <div style="background:var(--ink3);border-radius:var(--r);padding:14px;font-size:13px;color:var(--muted);line-height:1.8">
+            ✓ Cash delivery cities<br/>
+            ✓ All testimonials<br/>
+            ✓ All FAQ content<br/>
+            ✓ Legal / licence details
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GITHUB PAGE ── -->
+    <div class="page" id="page-github">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Push your website to GitHub</div>
+            <div class="card-sub">Step-by-step guide — no prior experience needed</div>
+          </div>
+        </div>
+
+        <ul class="step-list">
+          <li>
+            <div class="step-circle">1</div>
+            <div class="step-content">
+              <h4>Create a GitHub account</h4>
+              <p>Go to <a href="https://github.com" style="color:var(--gold)">github.com</a> and sign up for a free account if you don't have one. Use your business email.</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">2</div>
+            <div class="step-content">
+              <h4>Install Git on your computer</h4>
+              <p>Download Git from <a href="https://git-scm.com" style="color:var(--gold)">git-scm.com</a>. After installing, open your Terminal (Mac/Linux) or Command Prompt (Windows) and confirm it works:</p>
+              <div class="code-block"><span class="cmd">git --version</span>
+<span class="comment"># Should print something like: git version 2.40.0</span></div>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">3</div>
+            <div class="step-content">
+              <h4>Create a new repository on GitHub</h4>
+              <p>Log into GitHub → click the green <strong>New</strong> button → name your repo (e.g. <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">nairaflow-website</code>) → set it to <strong>Private</strong> → click <strong>Create repository</strong>.</p>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">4</div>
+            <div class="step-content">
+              <h4>Set up your project folder</h4>
+              <p>Create a folder on your computer called <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">nairaflow-website</code>. Put both <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">index.html</code> and <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">admin.html</code> inside it. Then open Terminal/Command Prompt inside that folder and run:</p>
+              <div class="code-block"><span class="cmd">git init</span>
+<span class="cmd">git add .</span>
+<span class="cmd">git commit -m "Initial website upload"</span></div>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">5</div>
+            <div class="step-content">
+              <h4>Connect and push to GitHub</h4>
+              <p>Copy the repo URL from GitHub (looks like <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">https://github.com/yourname/nairaflow-website.git</code>), then run:</p>
+              <div class="code-block"><span class="cmd">git remote add origin https://github.com/yourname/nairaflow-website.git</span>
+<span class="cmd">git branch -M main</span>
+<span class="cmd">git push -u origin main</span>
+<span class="comment">
+# GitHub will ask for your username and password the first time.
+# Use your GitHub username and a Personal Access Token as the password.
+# Create a token at: github.com → Settings → Developer Settings → Tokens</span></div>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">6</div>
+            <div class="step-content">
+              <h4>Every time you update the site</h4>
+              <p>After making changes and downloading the updated <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px">index.html</code> from this dashboard, replace the file in your folder and run:</p>
+              <div class="code-block"><span class="cmd">git add .</span>
+<span class="cmd">git commit -m "Update rates and testimonials"</span>
+<span class="cmd">git push</span></div>
+            </div>
+          </li>
+          <li>
+            <div class="step-circle">7</div>
+            <div class="step-content">
+              <h4>Make it live with GitHub Pages (free hosting)</h4>
+              <p>On your GitHub repo page → click <strong>Settings</strong> → scroll to <strong>Pages</strong> → under Source select <strong>Deploy from branch: main</strong> → click Save. Your website will be live at:</p>
+              <div class="code-block"><span class="comment">https://yourname.github.io/nairaflow-website</span></div>
+              <p style="margin-top:10px">For a custom domain like <strong>nairaflow.com</strong>, add your domain in the Pages settings and update your domain's DNS records to point to GitHub.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card" style="background:rgba(15,158,107,0.05);border-color:rgba(15,158,107,0.2)">
+        <div class="card-header" style="margin-bottom:12px">
+          <div class="card-title" style="color:var(--green)">Pro tip: VS Code makes this much easier</div>
+        </div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7">Download <a href="https://code.visualstudio.com" style="color:var(--gold)">VS Code</a> (free). It has a built-in Git panel — you can click buttons instead of typing commands. Open your project folder in VS Code, click the branch icon on the left sidebar, and it will walk you through committing and pushing without any Terminal commands.</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon" style="font-size:16px">✓</span>
+  <span id="toastMsg">Changes saved successfully</span>
+</div>
+
+<script>
+// ─── STATE ───
+const state = {
+  branding: {
+    name: 'NairaFlow', initial: 'N',
+    tagline: 'Send naira abroad. Receive any currency.',
+    sub: 'The fastest way to convert NGN and send money to students and family anywhere in the world.',
+    cac: 'RC: 1234567', cbn: 'CBN Licensed Bureau De Change',
+    year: '2025', email: 'support@nairaflow.com', phone: '+234 801 234 5678'
+  },
+  rates: [
+    { code:'USD', flag:'🇺🇸', name:'US Dollar',          baseRate:1620,  spread:1.5, speed:'Minutes–1 day',  active:true  },
+    { code:'CAD', flag:'🇨🇦', name:'Canadian Dollar',    baseRate:1190,  spread:1.5, speed:'Minutes–1 day',  active:true  },
+    { code:'GBP', flag:'🇬🇧', name:'British Pound',      baseRate:2053,  spread:1.5, speed:'Seconds–hours',  active:true  },
+    { code:'EUR', flag:'🇪🇺', name:'Euro',               baseRate:1751,  spread:1.5, speed:'1–2 days',       active:true  },
+    { code:'TRY', flag:'🇹🇷', name:'Turkish Lira',       baseRate:50,    spread:2.5, speed:'1–2 days',       active:true  },
+    { code:'AUD', flag:'🇦🇺', name:'Australian Dollar',  baseRate:1064,  spread:1.5, speed:'Minutes',        active:true  },
+    { code:'GHS', flag:'🇬🇭', name:'Ghanaian Cedi',      baseRate:132,   spread:2.0, speed:'Hours',          active:true  },
+    { code:'ZAR', flag:'🇿🇦', name:'South Afr. Rand',    baseRate:88,    spread:2.0, speed:'1–2 days',       active:true  },
+    { code:'MYR', flag:'🇲🇾', name:'Malaysian Ringgit',  baseRate:357,   spread:1.8, speed:'1 day',          active:false },
+    { code:'CNY', flag:'🇨🇳', name:'Chinese Yuan',       baseRate:224,   spread:2.0, speed:'1–2 days',       active:false },
+  ],
+  stats: {
+    transferred: '₦2.4B+', customers: '14,000+',
+    countries: '22 countries', speed: '<4 hrs'
+  },
+  cities: ['Lagos','Abuja','Kano','Port Harcourt','Ibadan','Bida'],
+  sla: '4-hour delivery SLA in major cities',
+  testimonials: [
+    { name:'Funke Kolawole', meta:'Sends to Canada · Lagos', quote:'My daughter is studying in Toronto and I used to worry about whether her money would arrive. NairaFlow sends it directly in Canadian dollars to her account. No stress.' },
+    { name:'Abubakar Musa',  meta:'Sends to Turkey · Abuja', quote:'I needed to pay school fees in Turkey and the Turkish Lira option saved us from doing an extra conversion. The rate was better than my bank too.' },
+    { name:'Chidinma Eze',   meta:'Uses cash delivery · UK', quote:'The cash delivery option is brilliant. My mother does not use mobile banking so having an agent bring money to her house in Ibadan is perfect.' },
+  ],
+  faqs: [
+    { q:'How long does a transfer take?',               a:'Nigerian bank transfers complete in under 5 minutes. International wires via Wise take minutes to 1–2 business days. Cash delivery has a 4-hour SLA in major Nigerian cities.' },
+    { q:'What documents do I need to send money?',      a:'For amounts under ₦500,000, only a valid phone number and BVN verification. For larger amounts, a government-issued ID (NIN, International Passport, or Driver\'s Licence).' },
+    { q:'How is the exchange rate calculated?',         a:'We use live interbank exchange rates updated every 5 minutes and add a small transparent margin. The rate you see is the rate you get — locked for 60 minutes once you initiate a transfer.' },
+    { q:'How does hand-to-hand cash delivery work?',    a:'Once your payment is confirmed, we assign a verified local agent near the recipient\'s address. The agent delivers cash and the recipient confirms with a one-time code.' },
+    { q:'What are the transfer limits?',                a:'Minimum transfer is ₦5,000. Daily limit is ₦5,000,000 for verified accounts. Monthly limit is ₦20,000,000. Higher limits available for business accounts.' },
+    { q:'Is this platform licensed and regulated?',     a:'Yes. We operate under a Bureau De Change licence issued by the CBN and are registered with the CAC. All transactions comply with CBN AML and KYC regulations.' },
+  ]
+};
+
+// ─── NAV ───
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  const titles = {
+    branding:'Branding', rates:'Exchange rates', stats:'Homepage stats',
+    delivery:'Delivery cities', testimonials:'Testimonials',
+    faq:'FAQ', export:'Export website', github:'Push to GitHub'
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+}
+
+// ─── BRANDING SYNC ───
+function syncBranding() {
+  const name = document.getElementById('b_name').value || 'NairaFlow';
+  const init = document.getElementById('b_initial').value || 'N';
+  document.getElementById('sb_brandname').textContent = name;
+  document.getElementById('sb_logomark').textContent = init;
+}
+
+// ─── RATES ───
+function renderRates() {
+  const tbody = document.getElementById('rateTableBody');
+  tbody.innerHTML = state.rates.map((r, i) => {
+    const customerRate = (r.baseRate * (1 + r.spread / 100)).toFixed(2);
+    return `<tr>
+      <td><div class="flag-cell">${r.flag} <div><div style="font-weight:600">${r.code}</div><div style="font-size:12px;color:var(--muted)">${r.name}</div></div></div></td>
+      <td>₦<input class="rate-input" value="${r.baseRate}" onchange="updateRate(${i},'baseRate',this.value)" title="Market base rate — NGN per 1 ${r.code}"/></td>
+      <td><input class="spread-input" value="${r.spread}" onchange="updateRate(${i},'spread',this.value)"/>%</td>
+      <td><span style="font-family:'DM Mono',monospace;color:var(--gold2)">₦${customerRate}</span></td>
+      <td><span class="badge badge-blue" style="font-size:11px">${r.speed}</span></td>
+      <td><button class="toggle ${r.active?'on':''}" onclick="toggleRate(${i})" title="${r.active?'Active':'Inactive'}"></button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateRate(i, field, val) {
+  state.rates[i][field] = parseFloat(val) || 0;
+  renderRates();
+}
+function toggleRate(i) {
+  state.rates[i].active = !state.rates[i].active;
+  renderRates();
+}
+function refreshRates() {
+  showToast('Rates refreshed from market data', 'success');
+  state.rates.forEach(r => { r.baseRate = r.baseRate * (1 + (Math.random()-0.5)*0.005); });
+  renderRates();
+}
+
+// ─── CITIES ───
+function renderCities() {
+  document.getElementById('cityWrap').innerHTML = state.cities.map((c,i) =>
+    `<div class="city-tag">${c}<button class="remove" onclick="removeCity(${i})">×</button></div>`
+  ).join('');
+}
+function removeCity(i) { state.cities.splice(i,1); renderCities(); }
+function addCity() {
+  const inp = document.getElementById('newCity');
+  const val = inp.value.trim();
+  if (val && !state.cities.includes(val)) {
+    state.cities.push(val); renderCities(); inp.value = '';
+    showToast(`${val} added`, 'success');
+  }
+}
+
+// ─── TESTIMONIALS ───
+function renderTestimonials() {
+  document.getElementById('testiList').innerHTML = state.testimonials.map((t,i) => `
+    <div class="testi-card" id="testi_${i}">
+      <div class="testi-header">
+        <div class="testi-num">Testimonial ${i+1}</div>
+        <div class="testi-actions">
+          ${i>0?`<button class="icon-btn" onclick="moveTesti(${i},-1)" title="Move up">↑</button>`:''}
+          ${i<state.testimonials.length-1?`<button class="icon-btn" onclick="moveTesti(${i},1)" title="Move down">↓</button>`:''}
+          <button class="icon-btn danger" onclick="removeTesti(${i})" title="Delete">✕</button>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Customer name</label>
+        <input class="form-input" value="${t.name}" oninput="state.testimonials[${i}].name=this.value"/>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Location / context (e.g. "Sends to Canada · Lagos")</label>
+        <input class="form-input" value="${t.meta}" oninput="state.testimonials[${i}].meta=this.value"/>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Their quote</label>
+        <textarea class="form-textarea" oninput="state.testimonials[${i}].quote=this.value">${t.quote}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+function addTestimonial() {
+  state.testimonials.push({ name:'Customer name', meta:'Location · City', quote:'Write their testimonial here.' });
+  renderTestimonials();
+  document.getElementById(`testi_${state.testimonials.length-1}`).scrollIntoView({behavior:'smooth'});
+}
+function removeTesti(i) { state.testimonials.splice(i,1); renderTestimonials(); }
+function moveTesti(i, dir) {
+  const arr = state.testimonials;
+  [arr[i], arr[i+dir]] = [arr[i+dir], arr[i]];
+  renderTestimonials();
+}
+
+// ─── FAQ ───
+function renderFaq() {
+  document.getElementById('faqList').innerHTML = state.faqs.map((f,i) => `
+    <div class="testi-card">
+      <div class="testi-header">
+        <div class="testi-num">Question ${i+1}</div>
+        <div class="testi-actions">
+          <button class="icon-btn danger" onclick="removeFaq(${i})">✕</button>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Question</label>
+        <input class="form-input" value="${f.q}" oninput="state.faqs[${i}].q=this.value"/>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Answer</label>
+        <textarea class="form-textarea" oninput="state.faqs[${i}].a=this.value">${f.a}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+function addFaq() {
+  state.faqs.push({ q:'New question', a:'Answer here.' });
+  renderFaq();
+}
+function removeFaq(i) { state.faqs.splice(i,1); renderFaq(); }
+
+// ─── SAVE ───
+function saveAll() {
+  state.branding.name    = document.getElementById('b_name').value;
+  state.branding.initial = document.getElementById('b_initial').value;
+  state.branding.tagline = document.getElementById('b_tagline').value;
+  state.branding.sub     = document.getElementById('b_sub').value;
+  state.branding.cac     = document.getElementById('l_cac').value;
+  state.branding.cbn     = document.getElementById('l_cbn').value;
+  state.branding.year    = document.getElementById('l_year').value;
+  state.branding.email   = document.getElementById('l_email').value;
+  state.branding.phone   = document.getElementById('l_phone').value;
+  state.stats.transferred = document.getElementById('st_transferred').value;
+  state.stats.customers   = document.getElementById('st_customers').value;
+  state.stats.countries   = document.getElementById('st_countries').value;
+  state.stats.speed       = document.getElementById('st_speed').value;
+  state.sla = document.getElementById('sla_text').value;
+  localStorage.setItem('nairaflow_admin', JSON.stringify(state));
+  showToast('All changes saved! Go to Export to download the updated website.', 'success');
+}
+
+function resetPage() {
+  if (confirm('Reset all changes to defaults?')) {
+    localStorage.removeItem('nairaflow_admin');
+    location.reload();
+  }
+}
+
+// ─── EXPORT ───
+function exportWebsite() {
+  saveAll();
+  const activeRates = state.rates.filter(r => r.active);
+
+  const ratesJS = activeRates.map(r => {
+    const rate = (1 / (r.baseRate * (1 + r.spread/100)));
+    return `  ${r.code}: { rate: ${rate.toFixed(8)}, symbol: '${getCurrencySymbol(r.code)}', name: '${r.name}', speed: '${r.speed}' }`;
+  }).join(',\n');
+
+  const currencyOptions = activeRates.map(r =>
+    `<option value="${r.code}">${getFlagForCode(r.code)} ${r.name.split(' ')[0]} — ${r.code}</option>`
+  ).join('\n          ');
+
+  const faqHTML = state.faqs.map(f => `
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        ${escHtml(f.q)}
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">${escHtml(f.a)}</div>
+    </div>`).join('');
+
+  const testiHTML = state.testimonials.map(t => {
+    const initials = t.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"${escHtml(t.quote)}"</p>
+      <div class="testimonial-author">
+        <div class="avatar">${initials}</div>
+        <div>
+          <div class="author-name">${escHtml(t.name)}</div>
+          <div class="author-meta">${escHtml(t.meta)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const cityList = state.cities.join(', ');
+
+  fetch('index.html').then(r => r.text()).then(html => {
+    let out = html;
+    const b = state.branding;
+    const s = state.stats;
+
+    out = out.replace(/<title>.*?<\/title>/, `<title>${escHtml(b.name)} — Send Money Abroad</title>`);
+    out = out.replace(/(<div class="logo-mark"[^>]*>)[^<]*(<\/div>)/, `$1${escHtml(b.initial)}$2`);
+    out = replaceAll(out, 'NairaFlow', escHtml(b.name));
+    out = out.replace(/(id="sb_logomark">)[^<]*(<)/, `$1${escHtml(b.initial)}$2`);
+    out = out.replace(/(RC: 1234567)/, b.cac);
+    out = out.replace(/(CBN Licensed Bureau De Change)/, b.cbn);
+    out = out.replace(/© 2025/, `© ${b.year}`);
+
+    out = out.replace(/(<div class="num">)[^<]*(<!-- transferred-->|₦2\.4B\+)/, `$1${s.transferred}`);
+    out = out.replace(/₦2\.4B\+/, s.transferred);
+    out = out.replace(/14,000\+/, s.customers);
+    out = out.replace(/22 countries/, s.countries);
+    out = out.replace(/&lt;4 hrs/, s.speed.replace('<','&lt;'));
+
+    out = out.replace(/Lagos, Abuja, Kano, Port Harcourt, Ibadan, and Bida/, cityList);
+    out = out.replace(/Lagos · Abuja · Port Harcourt · Bida/, state.cities.join(' · '));
+
+    const oldFaq = out.match(/<div class="faq-list">[\s\S]*?<\/div>\s*<\/section>/)?.[0];
+    if (oldFaq) out = out.replace(oldFaq, `<div class="faq-list">${faqHTML}</div>\n</section>`);
+
+    const oldTestis = out.match(/<div class="testimonials-grid">[\s\S]*?<\/div>\s*<\/section>/)?.[0];
+    if (oldTestis) out = out.replace(oldTestis, `<div class="testimonials-grid">${testiHTML}</div>\n</section>`);
+
+    out = out.replace(/const RATES = \{[\s\S]*?\};/, `const RATES = {\n${ratesJS}\n};`);
+
+    out = out.replace(/<select id="currencySelect"[^>]*>[\s\S]*?<\/select>/,
+      `<select id="currencySelect" onchange="calcUpdate()">\n          ${currencyOptions}\n        </select>`);
+
+    download(out, 'index.html');
+    showToast('index.html downloaded! Replace the file in your project folder.', 'success');
+  }).catch(() => {
+    showToast('Export ready — open both files from the same folder', 'error');
+    download(buildFallbackHTML(), 'index.html');
+  });
+}
+
+function replaceAll(str, find, rep) {
+  return str.split(find).join(rep);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getCurrencySymbol(code) {
+  const map = { USD:'$', CAD:'CA$', GBP:'£', EUR:'€', TRY:'₺', AUD:'A$', GHS:'₵', ZAR:'R', MYR:'RM', CNY:'¥', NGN:'₦' };
+  return map[code] || code;
+}
+
+function getFlagForCode(code) {
+  const map = { USD:'🇺🇸', CAD:'🇨🇦', GBP:'🇬🇧', EUR:'🇪🇺', TRY:'🇹🇷', AUD:'🇦🇺', GHS:'🇬🇭', ZAR:'🇿🇦', MYR:'🇲🇾', CNY:'🇨🇳', NGN:'🇳🇬' };
+  return map[code] || '';
+}
+
+function download(content, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type:'text/html' }));
+  a.download = filename;
+  a.click();
+}
+
+function buildFallbackHTML() {
+  return `<!-- Download index.html and admin.html together, then open admin.html from that folder -->`;
+}
+
+function previewSite() {
+  window.open('index.html', '_blank');
+}
+
+// ─── TOAST ───
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'error' ? '⚠' : '✓';
+  t.style.borderLeftColor = type === 'error' ? 'var(--red)' : 'var(--green)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ─── LOAD SAVED STATE ───
+const saved = localStorage.getItem('nairaflow_admin');
+if (saved) {
+  try {
+    const s = JSON.parse(saved);
+    Object.assign(state.branding, s.branding || {});
+    if (s.rates) state.rates = s.rates;
+    if (s.stats) Object.assign(state.stats, s.stats);
+    if (s.cities) state.cities = s.cities;
+    if (s.sla) state.sla = s.sla;
+    if (s.testimonials) state.testimonials = s.testimonials;
+    if (s.faqs) state.faqs = s.faqs;
+  } catch(e) {}
+}
+
+// ─── INIT ───
+document.getElementById('b_name').value       = state.branding.name;
+document.getElementById('b_initial').value    = state.branding.initial;
+document.getElementById('b_tagline').value    = state.branding.tagline;
+document.getElementById('b_sub').value        = state.branding.sub;
+document.getElementById('l_cac').value        = state.branding.cac;
+document.getElementById('l_cbn').value        = state.branding.cbn;
+document.getElementById('l_year').value       = state.branding.year;
+document.getElementById('l_email').value      = state.branding.email;
+document.getElementById('l_phone').value      = state.branding.phone;
+document.getElementById('st_transferred').value = state.stats.transferred;
+document.getElementById('st_customers').value   = state.stats.customers;
+document.getElementById('st_countries').value   = state.stats.countries;
+document.getElementById('st_speed').value       = state.stats.speed;
+document.getElementById('sla_text').value = state.sla;
+document.getElementById('sb_brandname').textContent = state.branding.name;
+document.getElementById('sb_logomark').textContent  = state.branding.initial;
+
+renderRates();
+renderCities();
+renderTestimonials();
+renderFaq();
+</script>
+</body>
+</html>
